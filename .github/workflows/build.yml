@@ -20,12 +20,17 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.x'
+          flutter-version: '3.19.6'
           channel: 'stable'
           cache: true
 
-      - name: Create Android project if missing
+      - name: Create Android project and fix name
         run: |
+          if [ -f "pubspec.yaml" ]; then
+            sed -i 's/name:\s*ed-pro/name: ed_pro/g' pubspec.yaml
+            sed -i 's/name:\s*ed\-pro/name: ed_pro/g' pubspec.yaml
+          fi
+
           if [ ! -d "android" ]; then
             flutter create . --platforms=android --org com.edpro.app
           fi
@@ -34,7 +39,7 @@ jobs:
         run: flutter pub get
 
       - name: Build Release APK
-        run: flutter build apk --release
+        run: flutter build apk --release --no-pub
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
