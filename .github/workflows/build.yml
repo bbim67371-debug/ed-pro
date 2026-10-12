@@ -24,8 +24,13 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Create Android boilerplate if missing
+      - name: Fix package name and create Android boilerplate
         run: |
+          # Sửa tên trong pubspec.yaml từ ed-pro thành ed_pro nếu có
+          if grep -q "name:\s*ed-pro" pubspec.yaml; then
+            sed -i 's/name:\s*ed-pro/name: ed_pro/g' pubspec.yaml
+          fi
+          
           if [ ! -d "android" ]; then
             flutter create . --platforms=android --org com.edpro.app
           fi
